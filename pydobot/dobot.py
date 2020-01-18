@@ -203,6 +203,13 @@ class Dobot:
             msg.params.extend(bytearray([0x00]))
         return self._send_command(msg)
 
+    def _set_wait_cmd(self, ms, wait):
+        msg = Message()
+        msg.id = 110
+        msg.ctrl = 0x03
+        msg.params = bytearray(struct.pack('I', ms))
+        return self._send_command(msg, wait=wait)
+
     def _set_queued_cmd_start_exec(self):
         msg = Message()
         msg.id = 240
@@ -256,3 +263,6 @@ class Dobot:
         j3 = struct.unpack_from('f', response.params, 24)[0]
         j4 = struct.unpack_from('f', response.params, 28)[0]
         return x, y, z, r, j1, j2, j3, j4
+
+    def wait(self, ms, wait=False):
+        self._set_wait_cmd(ms, wait)
