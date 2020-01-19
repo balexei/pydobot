@@ -210,6 +210,15 @@ class Dobot:
         msg.params = bytearray(struct.pack('I', ms))
         return self._send_command(msg, wait=wait)
 
+    def _set_emotor(self, index, enabled, speed, wait=False):
+        msg = Message()
+        msg.id = 135
+        msg.ctrl = 0x03
+        msg.params = bytearray(struct.pack('B', index))
+        msg.params.extend(bytearray(struct.pack('B', enabled)))
+        msg.params.extend(bytearray(struct.pack('i', speed)))
+        return self._send_command(msg, wait=wait)
+
     def _set_queued_cmd_start_exec(self):
         msg = Message()
         msg.id = 240
@@ -266,3 +275,10 @@ class Dobot:
 
     def wait(self, ms, wait=False):
         self._set_wait_cmd(ms, wait)
+
+    def start_stepper(self, pps, motor=0, wait=False):
+        self._set_emotor(motor, 1, pps, wait)
+
+    def stop_stepper(self, motor=0, wait=False):
+        self._set_emotor(motor, 0, 0, wait)
+
