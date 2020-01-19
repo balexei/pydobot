@@ -282,3 +282,5 @@ class Dobot:
     def stop_stepper(self, motor=0, wait=False):
         self._set_emotor(motor, 0, 0, wait)
 
+    def start_conveyor(self, speed, motor=0, wait=False):
+        self._set_emotor(motor, 1, 19800*speed, wait)
