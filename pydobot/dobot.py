@@ -219,6 +219,15 @@ class Dobot:
         msg.params.extend(bytearray(struct.pack('B', mode)))
         return self._send_command(msg, wait=wait)
 
+    def _set_io_pwm(self, address, f, d, wait=False):
+        msg = Message()
+        msg.id = 132
+        msg.ctrl = 0x03
+        msg.params = bytearray(struct.pack('B', address))
+        msg.params.extend(bytearray(struct.pack('f', f)))
+        msg.params.extend(bytearray(struct.pack('f', d)))
+        return self._send_command(msg, wait=wait)
+
     def _set_emotor(self, index, enabled, speed, wait=False):
         msg = Message()
         msg.id = 135
@@ -296,3 +305,6 @@ class Dobot:
 
     def set_io_mode(self, address, mode, wait=False):
         self._set_io_multiplexing(address, IO_MODES[mode], wait)
+
+    def set_pwm_output(self, address, frequency, duty_cycle, wait=False):
+        self._set_io_pwm(address, frequency, duty_cycle, wait)
