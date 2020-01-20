@@ -17,6 +17,7 @@ MODE_PTP_MOVJ_INC = 0x06
 MODE_PTP_MOVL_INC = 0x07
 MODE_PTP_MOVJ_XYZ_INC = 0x08
 MODE_PTP_JUMP_MOVL_XYZ = 0x09
+IO_MODES = {'Dummy': 1, 'PWM': 2, 'DO': 3, 'DI': 4, 'ADC': 5}
 
 
 class Dobot:
@@ -210,6 +211,14 @@ class Dobot:
         msg.params = bytearray(struct.pack('I', ms))
         return self._send_command(msg, wait=wait)
 
+    def _set_io_multiplexing(self, address, mode, wait=False):
+        msg = Message()
+        msg.id = 130
+        msg.ctrl = 0x03
+        msg.params = bytearray(struct.pack('B', address))
+        msg.params.extend(bytearray(struct.pack('B', mode)))
+        return self._send_command(msg, wait=wait)
+
     def _set_emotor(self, index, enabled, speed, wait=False):
         msg = Message()
         msg.id = 135
@@ -284,3 +293,6 @@ class Dobot:
 
     def start_conveyor(self, speed, motor=0, wait=False):
         self._set_emotor(motor, 1, 19800*speed, wait)
+
+    def set_io_mode(self, address, mode, wait=False):
+        self._set_io_multiplexing(address, IO_MODES[mode], wait)
